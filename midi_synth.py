@@ -17,7 +17,8 @@ def get_samples(notes_dict, num_samples=256):
 midi.init()
 midi_input = midi.Input(device_id=midi.get_default_input_id())
 
-stream = pyaudio.PyAudio().open(rate=8000, channels=1, format=pyaudio.paInt8, output=True, frames_per_buffer=256)
+p = pyaudio.PyAudio()
+stream = p.open(rate=8000, channels=1, format=pyaudio.paInt8, output=True, frames_per_buffer=256)
 
 try:
         notes_dict = {}
@@ -38,5 +39,7 @@ try:
                                         notes_dict[note] = get_sin_oscillator(freq=freq, amp=vel/127)
 
 except KeyboardInterrupt:
-        midi_input.close()
+        stream.stop_stream()
         stream.close()
+        midi_input.close()
+        p.terminate()
